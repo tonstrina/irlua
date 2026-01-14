@@ -1,6 +1,3 @@
-## File: `app/page.tsx`
-
-```tsx
 'use client';
 
 import React, { useState, useMemo } from 'react';
