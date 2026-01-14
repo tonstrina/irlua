@@ -3,7 +3,27 @@
 import React, { useState, useMemo } from 'react';
 import { Search, Volume2, BookOpen, Brain, Home, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 
-const vocabularyData = {
+// Type definitions
+interface Word {
+  en: string;
+  uk: string;
+  rom: string;
+  ga: string;
+  category?: string;
+}
+
+interface Phrase {
+  en: string;
+  uk: string;
+  rom: string;
+  ga: string;
+}
+
+type VocabularyData = {
+  [category: string]: Omit<Word, 'category'>[];
+};
+
+const vocabularyData: VocabularyData = {
   "Basic Politeness & Social": [
     { en: "Please", uk: "Будь ласка", rom: "Bud' laska", ga: "Le do thoil" },
     { en: "Thank you", uk: "Дякую", rom: "Dyakuyu", ga: "Go raibh maith agat" },
@@ -319,7 +339,7 @@ const vocabularyData = {
   ]
 };
 
-const phrases = [
+const phrases: Phrase[] = [
   { en: "Where is...?", uk: "Де знаходиться...?", rom: "De znakhodyt'sya...?", ga: "Cá bhfuil...?" },
   { en: "How much?", uk: "Скільки коштує?", rom: "Skil'ky koshtuye?", ga: "Cé mhéad?" },
   { en: "I don't understand", uk: "Я не розумію", rom: "Ya ne rozumiyu", ga: "Ní thuigim" },
@@ -328,7 +348,7 @@ const phrases = [
 ];
 
 export default function IrishEnglishLearner() {
-  const [mode, setMode] = useState('browse');
+  const [mode, setMode] = useState<'browse' | 'flashcard' | 'quiz'>('browse');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showUkrainian, setShowUkrainian] = useState(true);
@@ -339,10 +359,10 @@ export default function IrishEnglishLearner() {
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizAnswer, setQuizAnswer] = useState('');
   const [quizScore, setQuizScore] = useState({ correct: 0, total: 0 });
-  const [learnedWords, setLearnedWords] = useState(new Set());
+  const [learnedWords, setLearnedWords] = useState<Set<string>>(new Set());
 
   const allWords = useMemo(() => {
-    const words = [];
+    const words: Word[] = [];
     Object.entries(vocabularyData).forEach(([category, items]) => {
       items.forEach(item => {
         words.push({ ...item, category });
@@ -374,7 +394,7 @@ export default function IrishEnglishLearner() {
     }
   };
 
-  const toggleLearned = (word: any) => {
+  const toggleLearned = (word: Word) => {
     const newLearned = new Set(learnedWords);
     const key = `${word.en}-${word.uk}`;
     if (newLearned.has(key)) {
